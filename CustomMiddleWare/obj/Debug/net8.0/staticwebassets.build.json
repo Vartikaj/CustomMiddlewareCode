@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "kII3PnEe9ZsX74R0WVHLCcuLlLNBUGu4DafZQ2LBerg=",
+  "Source": "CustomMiddleWare",
+  "BasePath": "_content/CustomMiddleWare",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
