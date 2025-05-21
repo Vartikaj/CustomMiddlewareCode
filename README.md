@@ -1,3 +1,6 @@
+<h1>Middleware</h1>
+Middleware is a kind of software component. In .NET web API applications middleware is placed in between the server and the application. Middleware can be used for several purposes such as authentication, logging, exception handling, etc.
+
 <h3>Scenario</h3>
 A platform should be implemented to publish small stories about fairy tales. Users who registered with the system can publish their own stories and able to view all available stories in the system. Users should be able to register with the system and should be able to log in to the system using their username and password.
 
