@@ -6,7 +6,7 @@ namespace CustomMiddleWare.Models
     public class RegistrationModel
     {
         [JsonIgnore]
-        public int id {  get; set; }
+        public string id {  get; set; }
         [Required]
         public string firstname { get; set; }
         [Required]

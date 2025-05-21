@@ -13,7 +13,7 @@ namespace CustomMiddleWare.Utilities
             _config = config;
         }
 
-        public int? ValidateTokens(string token)
+        public string? ValidateTokens(string token)
         {
             if (token == null)
                 return null;
@@ -40,7 +40,7 @@ namespace CustomMiddleWare.Utilities
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "id");
                 if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
                 {
-                    return userId;
+                    return userId.ToString();
                 }
                 return null;
             }

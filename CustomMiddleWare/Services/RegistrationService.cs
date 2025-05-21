@@ -38,9 +38,9 @@ namespace CustomMiddleWare.Services
             return resultModel;
         }
 
-        public async Task<ResultModel<object>> LoginUser(LoginModel oLoginModel)
+        public async Task<ResultModel<RegistrationModel>> LoginUser(LoginModel oLoginModel)
         {
-            ResultModel<object> resultModel = new ResultModel<object>();
+            ResultModel<RegistrationModel> resultModel = new ResultModel<RegistrationModel>();
             try
             {
                 if(oLoginModel != null)
@@ -50,11 +50,11 @@ namespace CustomMiddleWare.Services
                     dynamicParameters.Add("firstname", oLoginModel.firstname, DbType.String);
                     dynamicParameters.Add("email", oLoginModel.email, DbType.String);
 
-                    var count = await _connection.QueryAsync<LoginModel>(sql, dynamicParameters);
+                    var count = await _connection.QueryAsync<RegistrationModel>(sql, dynamicParameters);
                     var countData = await _connection.QueryFirstOrDefaultAsync<int>(sql, dynamicParameters);
 
                     resultModel.success = countData > 0;
-                    resultModel.data = count.ToList();
+                    resultModel.LstModel = count.ToList();
                 } else
                 {
                     resultModel.success = false;
