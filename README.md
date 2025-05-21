@@ -15,6 +15,5 @@ This application will be implemented in accordance with the above-mentioned scen
 <h3>Middleware in ASP.NET Core: Key Concepts</h3>
 1. RequestDelegate
 Middleware is a delegate that takes an HttpContext object and returns a Task. The RequestDelegate represents the next middleware in the pipeline, allowing each component to either handle the request or pass it along.
-
 2. HttpContext
 The HttpContext object contains information about the current HTTP request and response, including headers, body, query parameters, user information, etc. Middleware components interact with this context to manipulate the flow.
