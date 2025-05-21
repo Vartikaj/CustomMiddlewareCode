@@ -6,4 +6,4 @@ This application will be implemented in accordance with the above-mentioned scen
 
 <h3>Request Flow Architecture</h3>
 <br/>
-![image](https://github.com/user-attachments/assets/99217a08-1db7-451d-b92c-c041aa748eb6)
+![Uploading image.png…]()
