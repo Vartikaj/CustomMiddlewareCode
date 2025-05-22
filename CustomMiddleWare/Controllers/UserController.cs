@@ -1,4 +1,5 @@
 ﻿using CustomMiddleWare.Interfaces;
+using CustomMiddleWare.Middlewares;
 using CustomMiddleWare.Models;
 using CustomMiddleWare.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,8 @@ namespace CustomMiddleWare.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -24,7 +27,6 @@ namespace CustomMiddleWare.Controllers
             _registrationService = registrationService;
         }
 
-        [Authorize]
         [HttpPost("RegisterUser")]
         public async Task<ResultModel<object>> registerUserData(RegistrationModel oRegistration)
         {
@@ -33,9 +35,14 @@ namespace CustomMiddleWare.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return await _registrationService.Add(oRegistration);
-                }
+                    var registrationData = await _registrationService.Add(oRegistration);
 
+                    if(registrationData != null)
+                    {
+                        result.success = true;
+                        result.message = registrationData.message;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -89,7 +96,7 @@ namespace CustomMiddleWare.Controllers
                 //new Claim(
                 //    JwtRegisteredClaimNames.Email, loginData.id
                 //),
-                new Claim("id", loginData.id)
+                new Claim("id", loginData.id.ToString())
              });
 
             var expires = DateTime.UtcNow.AddDays(10);

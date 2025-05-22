@@ -1,6 +1,7 @@
 ﻿using CustomMiddleWare.Interfaces;
 using CustomMiddleWare.Utilities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -18,12 +19,8 @@ namespace CustomMiddleWare.Middlewares
             _next = next;
         }
 
-
-        private IConfiguration _configuration;
-
-        public JwtMiddleware(IConfiguration configuration)
+        public JwtMiddleware()
         {
-            _configuration = configuration;
         }
 
         // call by default
@@ -33,6 +30,14 @@ namespace CustomMiddleWare.Middlewares
         // Authorization : Used because we call its function inside the class.
         public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
         {
+            var endpoint = httpContext.GetEndpoint();
+            // ✅ Skip middleware logic if [AllowAnonymous] is applied
+            if (endpoint?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.IAllowAnonymous>() != null)
+            {
+                await _next(httpContext);
+                return;
+            }
+
             var token = httpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (!string.IsNullOrEmpty(token))
@@ -40,19 +45,30 @@ namespace CustomMiddleWare.Middlewares
                 try
                 {
                     var userId = authorization.ValidateTokens(token);
-                    if(userId != null) {
-                        var userRegistration = registrationService.GetHashCode(userId);
-                        if(userRegistration != null)
+                    if (userId != null)
+                    {
+                        var userRegistration = registrationService.GetHashCode(userId); // replace with your actual method
+                        if (userRegistration != null)
                         {
                             httpContext.Items["Registration"] = userRegistration;
-                            return;
                         }
+                    } else
+                    {
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        await httpContext.Response.WriteAsync("Invalid Token");
+                        return;
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception)
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    await httpContext.Response.WriteAsync("Invalid Token");
+                    return;
                 }
             }
+
+            await _next(httpContext);
+            return;
         }
     }
 

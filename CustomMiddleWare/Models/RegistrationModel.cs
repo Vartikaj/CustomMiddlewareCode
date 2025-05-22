@@ -1,27 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace CustomMiddleWare.Models
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class RegistrationModel
     {
         [JsonIgnore]
-        public string id {  get; set; }
-        [Required]
+        public int id { get; set; }
         public string firstname { get; set; }
-        [Required]
         public string lastname { get; set; }
         [Required]
         public string email { get; set; }
-        [Required]
         public string phone { get; set; }
-        [Required]
         public string address { get; set; }
-        [Required]
         public string city { get; set; }
-        [Required]
         public string country { get; set; }
-        [Required]
         public string postalcode { get; set; }
     }
 
