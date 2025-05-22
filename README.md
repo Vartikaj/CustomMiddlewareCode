@@ -110,31 +110,30 @@ If token is not null the validate the token by calling <b>ValidateTokens</b> met
 <h5>Registration Service : </h5>
 <pre>
   public async Task<ResultModel<RegistrationModel>> GetHashCode(string id)
-{
-    ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
-    try
-    {
-        if (id != null)
-        {
-            var sql = "SELECT * FROM registration WHERE id = @id";
-            DynamicParameters dynamicParameters = new DynamicParameters();
-            dynamicParameters.Add("id", id);
-
-            var count = await _connection.QueryAsync<RegistrationModel>(sql, dynamicParameters);
-            var countData = await _connection.QueryFirstOrDefaultAsync(sql, dynamicParameters);
-            if(countData > 0)
-            {
-                result.success = countData > 0;
-                result.LstModel = count.ToList();
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        throw ex;
-    }
-    return result;
-}
+  {
+      ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
+      try
+      {
+          if (id != null)
+          {
+              var sql = "SELECT * FROM registration WHERE id = @id";
+              DynamicParameters dynamicParameters = new DynamicParameters();
+              dynamicParameters.Add("id", id);
+              var count = await _connection.QueryAsync<RegistrationModel>(sql, dynamicParameters);
+              var countData = await _connection.QueryFirstOrDefaultAsync(sql, dynamicParameters);
+              if(countData > 0)
+              {
+                  result.success = countData > 0;
+                  result.LstModel = count.ToList();
+              }
+          }
+      }
+      catch (Exception ex)
+      {
+          throw ex;
+      }
+      return result;
+  }
 </pre>
 using the above code will return all the record present inside the database.
 
