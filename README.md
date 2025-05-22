@@ -180,3 +180,13 @@ public async Task Invoke(HttpContext httpContext, IRegistration registrationServ
     return;
 }</pre>
 
+<pre>private readonly RequestDelegate _next;
+
+public JwtMiddleware(RequestDelegate next)
+{
+    _next = next;
+}</pre>
+
+RequestDelegate should be added because it is responsible to call the next pipeline and in the invoke function we need to add <pre>await _next(httpContext);</pre> to call the next middleware in the pipeline.
+
+
