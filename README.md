@@ -249,3 +249,70 @@ The ASP.NET Core Authentication middleware:
   <li>[Authorize] attributes work out of the box</li>
   <li>You don’t need to manually parse the JWT in middleware unless you want to add custom logic</li>
 </ol>
+
+<h4>How JWT Token generate using Login</h4>
+<pre>
+  [AllowAnonymous]
+[HttpPost("LoginUser")]
+public async Task<ResultModel<RegistrationModel>> LoginUserData(LoginModel oLogin)
+{
+    ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
+    try
+    {
+        if (ModelState.IsValid)
+        {
+            IActionResult response = Unauthorized();
+            var loginData = await _registrationService.LoginUser(oLogin);
+
+            if (loginData != null)
+            {
+                if (loginData.error)
+                {
+                    result.success = true;
+                    result.message = GenerateToken((RegistrationModel)loginData.LstModel[0]);
+                    return result;
+                }
+            }
+        }
+
+    }
+    catch (Exception ex)
+    {
+        throw ex;
+    }
+
+    return result;
+}
+
+private string GenerateToken(RegistrationModel loginData)
+{
+    var issuer = _configuration["Jwt:Issuer"];
+    var audience = _configuration["Jwt:Audience"];
+    var key = Encoding.UTF8.GetBytes(_configuration["Jwt:key"]);
+
+    var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
+    var subject = new ClaimsIdentity(new[]
+    {
+        //new Claim(
+        //    JwtRegisteredClaimNames.Email, loginData.id
+        //),
+        new Claim("id", loginData.id.ToString())
+     });
+
+    var expires = DateTime.UtcNow.AddDays(10);
+    var tokenDescription = new SecurityTokenDescriptor
+    {
+        Subject = subject,
+        Issuer = issuer,
+        Expires = expires,
+        Audience = audience,
+        SigningCredentials = signingCredentials
+    };
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescription);
+    var jwtToken = tokenHandler.WriteToken(token);
+
+    return jwtToken;
+}
+</pre>
