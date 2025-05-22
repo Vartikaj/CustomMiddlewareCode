@@ -136,7 +136,7 @@ If token is not null the validate the token by calling <b>ValidateTokens</b> met
     return result;
 }
 </pre>
-
+using the above code will return all the record present inside the database.
 
 <pre>
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
