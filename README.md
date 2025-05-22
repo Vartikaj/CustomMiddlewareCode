@@ -290,16 +290,16 @@ private string GenerateToken(RegistrationModel loginData)
     var audience = _configuration["Jwt:Audience"];
     var key = Encoding.UTF8.GetBytes(_configuration["Jwt:key"]);
 
-    var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
+    var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature); // this will set the signature in the JWT Token
     var subject = new ClaimsIdentity(new[]
     {
         //new Claim(
         //    JwtRegisteredClaimNames.Email, loginData.id
         //),
         new Claim("id", loginData.id.ToString())
-     });
+     }); // using this we will add the claims inside the token
 
-    var expires = DateTime.UtcNow.AddDays(10);
+    var expires = DateTime.UtcNow.AddDays(10); // add the expiration time inside the token
     var tokenDescription = new SecurityTokenDescriptor
     {
         Subject = subject,
@@ -307,11 +307,11 @@ private string GenerateToken(RegistrationModel loginData)
         Expires = expires,
         Audience = audience,
         SigningCredentials = signingCredentials
-    };
+    }; // now combine all the description abouthe token which we generated above
 
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var token = tokenHandler.CreateToken(tokenDescription);
-    var jwtToken = tokenHandler.WriteToken(token);
+    var tokenHandler = new JwtSecurityTokenHandler(); // now call the Token Handler class
+    var token = tokenHandler.CreateToken(tokenDescription); // this will create encrypted token for us
+    var jwtToken = tokenHandler.WriteToken(token); // and write token will generate token. After combining all the values
 
     return jwtToken;
 }
