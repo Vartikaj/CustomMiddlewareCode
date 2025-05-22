@@ -86,7 +86,7 @@ Then check <pre>if (!string.IsNullOrEmpty(token))</pre>. Check token is not or E
             };
 
             SecurityToken validateToken;
-            tokenHandler.ValidateToken(token, validationParameters, out validateToken);
+            tokenHandler.ValidateToken(token, validationParameters, out validateToken); //out function is a call by reference funtion which is used to overite the validateToken value if new token is validate. and automatically pass. It is not mandatory out parametername present in the same class.
 
             var jwtToken = (JwtSecurityToken)validateToken;
 
@@ -188,5 +188,21 @@ public JwtMiddleware(RequestDelegate next)
 }</pre>
 
 RequestDelegate should be added because it is responsible to call the next pipeline and in the invoke function we need to add <pre>await _next(httpContext);</pre> to call the next middleware in the pipeline.
+and also we need to add the [Authorize] filter above the controller which need authentication before calling it.
 
+For calling this pipeline during the code load we need to use Extension class. 
+<pre>
+  // this Extension method used to add the middleware to the HTTP request pipeline
+  public static class JwtMiddlewareExtensions
+  {
+      public static IApplicationBuilder UseJwtMiddleware(this IApplicationBuilder builder)
+      {
+          return builder.UseMiddleware<JwtMiddleware>(); // this will add the middleware in the program.cs file
+      }
+  }
+</pre>
+
+<h4>Program.cs</h4>
+
+This 
 
