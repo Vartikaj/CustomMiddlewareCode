@@ -52,6 +52,91 @@ This method has 3 parameters:
 First calling Invoke function this will check the conteoller having [AllowAnonymous] filter or not. All the information about conteoller we get from the HttpContext.
 using <pre>endpoint?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.IAllowAnonymous>() != null</pre> we check is it contain filter or not.
 If it contain then call the controller first whithout checking the Authorization.
+If it not contain AllowAnonmous. then took Authentication form the header using httpContext and took the second text after space. 
+Then check <pre>if (!string.IsNullOrEmpty(token))</pre>. Check token is not or Empty.
+
+<h5>ValidateToken : </h5>
+<pre>
+  public class JwtUtils
+{
+    private IConfiguration _config;
+
+    public JwtUtils(IConfiguration config)
+    {
+        _config = config;
+    }
+
+    public string? ValidateTokens(string token)
+    {
+        if (token == null)
+            return null;
+
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+            };
+
+            SecurityToken validateToken;
+            tokenHandler.ValidateToken(token, validationParameters, out validateToken);
+
+            var jwtToken = (JwtSecurityToken)validateToken;
+
+            var userIdClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == "id");
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            {
+                return userId.ToString();
+            }
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+}
+</pre>
+
+If token is not null the validate the token by calling <b>ValidateTokens</b> method if all the claims inside the token is satisfying the condition the this will return us the id used inside the token. and the we pass this Id which we get from the Validation token then we go to the registration service and get all the data present inside the database.
+
+<h5>Registration Service : </h5>
+<pre>
+  public async Task<ResultModel<RegistrationModel>> GetHashCode(string id)
+{
+    ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
+    try
+    {
+        if (id != null)
+        {
+            var sql = "SELECT * FROM registration WHERE id = @id";
+            DynamicParameters dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("id", id);
+
+            var count = await _connection.QueryAsync<RegistrationModel>(sql, dynamicParameters);
+            var countData = await _connection.QueryFirstOrDefaultAsync(sql, dynamicParameters);
+            if(countData > 0)
+            {
+                result.success = countData > 0;
+                result.LstModel = count.ToList();
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        throw ex;
+    }
+    return result;
+}
+</pre>
+
 
 <pre>
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
