@@ -28,3 +28,66 @@ This application will be implemented in accordance with the above-mentioned scen
   </li>
 </ol>
 
+<h3>Code Working: </h3>
+
+
+<h4><b>Invoke</b> :</h4> 
+In ASP.NET Core middleware, the standard method <b>signature</b> looks like:
+<b>public async Task Invoke(HttpContext context)</b>
+But if you want to use Dependency Injection (DI) to access services like IRegistration or JwtUtils, ASP.NET Core allows you to add additional parameters to the Invoke method.
+This method has 3 parameters:
+<ol>
+  <li>
+    HttpContext httpContext – required for all middleware (represents the current request/response).
+  </li>
+  <li>
+    IRegistration registrationService – DI injected service to interact with registration data.
+  </li>
+  <li>
+    JwtUtils authorization – DI injected utility class you created for JWT token handling.
+  </li>
+</ol>
+
+public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
+{
+    var endpoint = httpContext.GetEndpoint();
+    // ✅ Skip middleware logic if [AllowAnonymous] is applied
+    if (endpoint?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.IAllowAnonymous>() != null)
+    {
+        await _next(httpContext);
+        return;
+    }
+
+    var token = httpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+    if (!string.IsNullOrEmpty(token))
+    {
+        try
+        {
+            var userId = authorization.ValidateTokens(token);
+            if (userId != null)
+            {
+                var userRegistration = registrationService.GetHashCode(userId); // replace with your actual method
+                if (userRegistration != null)
+                {
+                    httpContext.Items["Registration"] = userRegistration;
+                }
+            } else
+            {
+                httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                await httpContext.Response.WriteAsync("Invalid Token");
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            await httpContext.Response.WriteAsync("Invalid Token");
+            return;
+        }
+    }
+
+    await _next(httpContext);
+    return;
+}
+
