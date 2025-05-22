@@ -48,7 +48,10 @@ This method has 3 parameters:
   </li>
 </ol>
 
-
+<h5>Workflow : </h5>
+First calling Invoke function this will check the conteoller having [AllowAnonymous] filter or not. All the information about conteoller we get from the HttpContext.
+using <pre>endpoint?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.IAllowAnonymous>() != null</pre> we check is it contain filter or not.
+If it contain then call the controller first whithout checking the Authorization.
 
 <pre>
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
@@ -87,9 +90,9 @@ public async Task Invoke(HttpContext httpContext, IRegistration registrationServ
             await httpContext.Response.WriteAsync("Invalid Token");
             return;
         }
-    }</pre>
+    }
 
     await _next(httpContext);
     return;
-}
+}</pre>
 
