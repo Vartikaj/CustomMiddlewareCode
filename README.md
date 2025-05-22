@@ -48,6 +48,7 @@ This method has 3 parameters:
   </li>
 </ol>
 
+
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
 {
     var endpoint = httpContext.GetEndpoint();
@@ -57,9 +58,7 @@ public async Task Invoke(HttpContext httpContext, IRegistration registrationServ
         await _next(httpContext);
         return;
     }
-
     var token = httpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
     if (!string.IsNullOrEmpty(token))
     {
         try
