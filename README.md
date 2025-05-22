@@ -50,7 +50,7 @@ This method has 3 parameters:
 
 
 
-
+<pre>
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
 {
     var endpoint = httpContext.GetEndpoint();
@@ -87,7 +87,7 @@ public async Task Invoke(HttpContext httpContext, IRegistration registrationServ
             await httpContext.Response.WriteAsync("Invalid Token");
             return;
         }
-    }
+    }</pre>
 
     await _next(httpContext);
     return;
