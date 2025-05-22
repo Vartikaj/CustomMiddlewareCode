@@ -230,27 +230,22 @@ builder.Services.AddAuthorization();
 </pre>
 
 this code need to to added because If you do not include the AddAuthentication() and AddJwtBearer() setup in your Program.cs, JWT token validation will not happen automatically, and you'll face the following issues:
-🔴 1. [Authorize] or [JwtMiddleware] won’t work properly
+<ol>
+  <li>🔴 [Authorize] or [JwtMiddleware] won’t work properly
 These attributes rely on the authentication scheme being set up correctly. Without it:
-
 The request will always be unauthenticated.
+Your controller action may still get executed if custom middleware doesn't block it.</li>
+  <li>🔴 User.Identity and User.Claims will be empty
+The built-in middleware that decodes JWT tokens and sets the HttpContext.User won’t run.</li>
+  <li>🔴 You will have to manually validate and parse the JWT token (which you're doing in your JwtMiddleware) — but it won't fully integrate with ASP.NET Core's Authorization system.</li>
+</ol>
 
-Your controller action may still get executed if custom middleware doesn't block it.
-
-🔴 2. User.Identity and User.Claims will be empty
-The built-in middleware that decodes JWT tokens and sets the HttpContext.User won’t run.
-
-🔴 3. You will have to manually validate and parse the JWT token (which you're doing in your JwtMiddleware) — but it won't fully integrate with ASP.NET Core's Authorization system.
-
-✅ What Happens When You DO Include It
+<h4>✅ What Happens When You DO Include It</h4>
 The ASP.NET Core Authentication middleware:
-
-Reads the Authorization: Bearer <token> header
-
-Validates the token using the configured TokenValidationParameters
-
-Sets HttpContext.User with claims from the token
-
-[Authorize] attributes work out of the box
-
-You don’t need to manually parse the JWT in middleware unless you want to add custom logic (e.g., database check)
+<ol>
+  <li>Reads the Authorization: Bearer <token> header</li>
+  <li>Validates the token using the configured TokenValidationParameters</li>
+  <li>Sets HttpContext.User with claims from the token</li>
+  <li>[Authorize] attributes work out of the box</li>
+  <li>You don’t need to manually parse the JWT in middleware unless you want to add custom logic</li>
+</ol>
