@@ -204,5 +204,53 @@ For calling this pipeline during the code load we need to use Extension class.
 
 <h4>Program.cs</h4>
 
-This 
+This is the file which load first in during the application start executing.
 
+<pre>
+  builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o=>
+{
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidateAudience = true,
+        ValidateIssuer = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
+    };
+});
+
+builder.Services.AddAuthorization();
+</pre>
+
+this code need to to added because If you do not include the AddAuthentication() and AddJwtBearer() setup in your Program.cs, JWT token validation will not happen automatically, and you'll face the following issues:
+🔴 1. [Authorize] or [JwtMiddleware] won’t work properly
+These attributes rely on the authentication scheme being set up correctly. Without it:
+
+The request will always be unauthenticated.
+
+Your controller action may still get executed if custom middleware doesn't block it.
+
+🔴 2. User.Identity and User.Claims will be empty
+The built-in middleware that decodes JWT tokens and sets the HttpContext.User won’t run.
+
+🔴 3. You will have to manually validate and parse the JWT token (which you're doing in your JwtMiddleware) — but it won't fully integrate with ASP.NET Core's Authorization system.
+
+✅ What Happens When You DO Include It
+The ASP.NET Core Authentication middleware:
+
+Reads the Authorization: Bearer <token> header
+
+Validates the token using the configured TokenValidationParameters
+
+Sets HttpContext.User with claims from the token
+
+[Authorize] attributes work out of the box
+
+You don’t need to manually parse the JWT in middleware unless you want to add custom logic (e.g., database check)
