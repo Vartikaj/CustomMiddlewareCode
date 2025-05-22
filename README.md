@@ -50,9 +50,9 @@ This method has 3 parameters:
 
 
 
+
 public async Task Invoke(HttpContext httpContext, IRegistration registrationService, JwtUtils authorization)
 {
-
     var endpoint = httpContext.GetEndpoint();
     // ✅ Skip middleware logic if [AllowAnonymous] is applied
     if (endpoint?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.IAllowAnonymous>() != null)
