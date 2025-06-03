@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,7 +16,6 @@ namespace CustomMiddleWare.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -27,6 +27,7 @@ namespace CustomMiddleWare.Controllers
             _registrationService = registrationService;
         }
 
+        
         [HttpPost("RegisterUser")]
         public async Task<ResultModel<object>> registerUserData(RegistrationModel oRegistration)
         {
@@ -54,22 +55,23 @@ namespace CustomMiddleWare.Controllers
 
         [AllowAnonymous]
         [HttpPost("LoginUser")]
-        public async Task<ResultModel<RegistrationModel>> LoginUserData(LoginModel oLogin)
+        public async Task<ResultModel<AccessTokenDetails>> LoginUserData(LoginModel oLogin)
         {
-            ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
+            ResultModel<AccessTokenDetails> result = new ResultModel<AccessTokenDetails>();
             try
             {
-                if (ModelState.IsValid)
+                if (ModelState.IsValid) 
                 {
                     IActionResult response = Unauthorized();
                     var loginData = await _registrationService.LoginUser(oLogin);
 
                     if (loginData != null)
                     {
+                        AccessTokenDetails oAccessToken = await GenerateToken("https://localhost:7064/connect/token", (RegistrationModel)loginData.LstModel[0]);
                         if (loginData.error)
                         {
                             result.success = true;
-                            result.message = GenerateToken((RegistrationModel)loginData.LstModel[0]);
+                            result.data = oAccessToken;
                             return result;
                         }
                     }
@@ -84,36 +86,50 @@ namespace CustomMiddleWare.Controllers
             return result;
         }
 
-        private string GenerateToken(RegistrationModel loginData)
+        private async static Task<AccessTokenDetails> GenerateToken(string IdentityServer, RegistrationModel loginData)
         {
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:key"]);
-
-            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
-            var subject = new ClaimsIdentity(new[]
-            {
-                //new Claim(
-                //    JwtRegisteredClaimNames.Email, loginData.id
-                //),
-                new Claim("id", loginData.id.ToString())
-             });
-
-            var expires = DateTime.UtcNow.AddDays(10);
-            var tokenDescription = new SecurityTokenDescriptor
-            {
-                Subject = subject,
-                Issuer = issuer,
-                Expires = expires,
-                Audience = audience,
-                SigningCredentials = signingCredentials
+            HttpClient client = new HttpClient();
+            string data = JsonConvert.SerializeObject(loginData);
+            var values = new Dictionary<string, string> {
+                { "client_id", "mvc" },
+                { "client_secret", "secret" },
+                { "grant_type", "client_credentials" },
+                { "username", "username" },
+                { "password", "password" },
+                { "userdata", data }
             };
+            var content = new FormUrlEncodedContent(values);
+            var response = await client.PostAsync(IdentityServer, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+            AccessTokenDetails oAccessTokenDetails = JsonConvert.DeserializeObject<AccessTokenDetails>(responseString);
+            return oAccessTokenDetails;
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescription);
-            var jwtToken = tokenHandler.WriteToken(token);
+            //var issuer = _configuration["Jwt:Issuer"];
+            //var audience = _configuration["Jwt:Audience"];
+            //var key = Encoding.UTF8.GetBytes(_configuration["Jwt:key"]);
 
-            return jwtToken;
+            //var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
+            //var subject = new ClaimsIdentity(new[]
+            //{
+            //    //new Claim(
+            //    //    JwtRegisteredClaimNames.Email, loginData.id
+            //    //),
+            //    new Claim("id", loginData.id.ToString())
+            // });
+
+            //var expires = DateTime.UtcNow.AddDays(10);
+            //var tokenDescription = new SecurityTokenDescriptor
+            //{
+            //    Subject = subject,
+            //    Issuer = issuer,
+            //    Expires = expires,
+            //    Audience = audience,
+            //    SigningCredentials = signingCredentials
+            //};
+
+            //var tokenHandler = new JwtSecurityTokenHandler();
+            //var token = tokenHandler.CreateToken(tokenDescription);
+            //var jwtToken = tokenHandler.WriteToken(token);
         }
     }
 }

@@ -8,7 +8,9 @@
     ".NETCoreApp,Version=v8.0": {
       "CustomMiddleWare/1.0.0": {
         "dependencies": {
+          "3Chum.IdentityServer4.AccessTokenValidation": "8.0.0",
           "Dapper": "2.1.66",
+          "Duende.IdentityServer": "7.2.3",
           "JWT": "11.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6",
           "Microsoft.EntityFrameworkCore": "9.0.5",
@@ -20,6 +22,19 @@
         },
         "runtime": {
           "CustomMiddleWare.dll": {}
+        }
+      },
+      "3Chum.IdentityServer4.AccessTokenValidation/8.0.0": {
+        "dependencies": {
+          "IdentityModel": "7.0.0",
+          "IdentityModel.AspNetCore.OAuth2Introspection": "6.2.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.6"
+        },
+        "runtime": {
+          "lib/net8.0/IdentityServer4.AccessTokenValidation.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.0.0"
+          }
         }
       },
       "BouncyCastle.Cryptography/2.5.1": {
@@ -38,11 +53,62 @@
           }
         }
       },
+      "Duende.IdentityModel/7.0.0": {
+        "runtime": {
+          "lib/net8.0/Duende.IdentityModel.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.0.0"
+          }
+        }
+      },
+      "Duende.IdentityServer/7.2.3": {
+        "dependencies": {
+          "Duende.IdentityServer.Storage": "7.2.3",
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "8.0.10"
+        },
+        "runtime": {
+          "lib/net8.0/Duende.IdentityServer.dll": {
+            "assemblyVersion": "7.2.3.0",
+            "fileVersion": "7.2.3.0"
+          }
+        }
+      },
+      "Duende.IdentityServer.Storage/7.2.3": {
+        "dependencies": {
+          "Duende.IdentityModel": "7.0.0",
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "8.0.10"
+        },
+        "runtime": {
+          "lib/net8.0/Duende.IdentityServer.Storage.dll": {
+            "assemblyVersion": "7.2.3.0",
+            "fileVersion": "7.2.3.0"
+          }
+        }
+      },
       "Google.Protobuf/3.30.0": {
         "runtime": {
           "lib/net5.0/Google.Protobuf.dll": {
             "assemblyVersion": "3.30.0.0",
             "fileVersion": "3.30.0.0"
+          }
+        }
+      },
+      "IdentityModel/7.0.0": {
+        "runtime": {
+          "lib/net6.0/IdentityModel.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.0.0"
+          }
+        }
+      },
+      "IdentityModel.AspNetCore.OAuth2Introspection/6.2.0": {
+        "dependencies": {
+          "IdentityModel": "7.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/IdentityModel.AspNetCore.OAuth2Introspection.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.2.0.0"
           }
         }
       },
@@ -94,6 +160,25 @@
           "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
             "assemblyVersion": "8.0.6.0",
             "fileVersion": "8.0.624.26909"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/8.0.10": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.1.2"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
+            "assemblyVersion": "8.0.10.0",
+            "fileVersion": "8.0.1024.46804"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.DataProtection.Abstractions/8.0.10": {
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.DataProtection.Abstractions.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.1024.46804"
           }
         }
       },
@@ -612,6 +697,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "3Chum.IdentityServer4.AccessTokenValidation/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-10XubS7iUHZeWa7803LfkIRAvJIzvrZ/bv5jMjihMyd/iyEeLqEGt0Kyl7/qDPLWH2MYdPV4XCULPMCXToApgg==",
+      "path": "3chum.identityserver4.accesstokenvalidation/8.0.0",
+      "hashPath": "3chum.identityserver4.accesstokenvalidation.8.0.0.nupkg.sha512"
+    },
     "BouncyCastle.Cryptography/2.5.1": {
       "type": "package",
       "serviceable": true,
@@ -626,12 +718,47 @@
       "path": "dapper/2.1.66",
       "hashPath": "dapper.2.1.66.nupkg.sha512"
     },
+    "Duende.IdentityModel/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-h6xvWQi9bASgroNh+6Z/BpSUpKTy/sSuc2l4twi0igSY0X0z7Y8eYMGMHB7trwdT56EGlWeXLA6qAb8VOg8ATA==",
+      "path": "duende.identitymodel/7.0.0",
+      "hashPath": "duende.identitymodel.7.0.0.nupkg.sha512"
+    },
+    "Duende.IdentityServer/7.2.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kwX4C7CUxKeoX669GNnl8jmawBiV4QK8bx+lFW+ZHKHaqhgULsodHfMkL6hKyz8ANAWHcxAURCro69cdR+6bOA==",
+      "path": "duende.identityserver/7.2.3",
+      "hashPath": "duende.identityserver.7.2.3.nupkg.sha512"
+    },
+    "Duende.IdentityServer.Storage/7.2.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QVm8vEp1D/vT7WlsSyE4+PwSj5FK0BqhpqCvvvQtoyqNb+18MMevpXJ6+XkplBwZcGY8SYpGgwabehxg6ylrXQ==",
+      "path": "duende.identityserver.storage/7.2.3",
+      "hashPath": "duende.identityserver.storage.7.2.3.nupkg.sha512"
+    },
     "Google.Protobuf/3.30.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-ZnEI4oZWnHvd+Yz5Gcnx5Q5RQIuzptIzd0fmxAN8f81FYHI0USZqMOrPTkrsd/QEzo9vl2b217v9FqFgHfufQw==",
       "path": "google.protobuf/3.30.0",
       "hashPath": "google.protobuf.3.30.0.nupkg.sha512"
+    },
+    "IdentityModel/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-to99aLL5Gev1GOb2gUao/UZXT/uXMyjEmHPNrf/vJI2HBD1LMCTeC4SBCe/cqMIB12V9v+eSieq7ff0lju9pOQ==",
+      "path": "identitymodel/7.0.0",
+      "hashPath": "identitymodel.7.0.0.nupkg.sha512"
+    },
+    "IdentityModel.AspNetCore.OAuth2Introspection/6.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1hRDOqWk5jdATfOIso5GsewS391ngZ8mSoLbfdEHv2vue8CV1tv6Xy/xmY8phENm6Bvg9U0twzkAz/alhiKD8g==",
+      "path": "identitymodel.aspnetcore.oauth2introspection/6.2.0",
+      "hashPath": "identitymodel.aspnetcore.oauth2introspection.6.2.0.nupkg.sha512"
     },
     "JWT/11.0.0": {
       "type": "package",
@@ -667,6 +794,20 @@
       "sha512": "sha512-devoUZd8YqikCheBVYpIyvp9psM2Y2ZhOvq1zL2YSjIoq3FUQH8LpLkGak+8oAi/5DGqX8KWyLpZJSUXtOAVCw==",
       "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.6",
       "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/8.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-X7idCyA4JhF4iInQUsSuIRcZzjr5h0Rl7IHxNRz/yd136+CIZ4tMMjasxiVOzU/IdWsR4UIG75DLsjcJrlYs8w==",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/8.0.10",
+      "hashPath": "microsoft.aspnetcore.authentication.openidconnect.8.0.10.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.DataProtection.Abstractions/8.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-tDA68PYc0M/gyijcERsC3E1anqRpOmmmWJqpHmbbmrv6h/IjelnwzKaQwXdeJ36sEyB7dRuteC+j3fKyl/J/7A==",
+      "path": "microsoft.aspnetcore.dataprotection.abstractions/8.0.10",
+      "hashPath": "microsoft.aspnetcore.dataprotection.abstractions.8.0.10.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore/9.0.5": {
       "type": "package",

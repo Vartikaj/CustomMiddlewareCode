@@ -70,16 +70,16 @@ namespace CustomMiddleWare.Services
         }
 
 
-        public async Task<ResultModel<RegistrationModel>> GetHashCode(string email)
+        public async Task<ResultModel<RegistrationModel>> GetHashCode(string id)
         {
             ResultModel<RegistrationModel> result = new ResultModel<RegistrationModel>();
             try
             {
-                if (email != null)
+                if (id != null)
                 {
-                    var sql = "SELECT * FROM registration WHERE email = @email";
+                    var sql = "SELECT * FROM registration WHERE id = @id";
                     DynamicParameters dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("email", email);
+                    dynamicParameters.Add("id", id);
 
                     var count = await _connection.QueryAsync<RegistrationModel>(sql, dynamicParameters);
                     var countData = await _connection.QueryFirstOrDefaultAsync(sql, dynamicParameters);
