@@ -25,7 +25,7 @@ builder.Services.AddAuthentication("Bearer")
     .AddIdentityServerAuthentication("Bearer", options =>
     {
         options.ApiName = "CustomMiddleware";
-        options.Authority = "https://localhost:7064/";
+        options.Authority = "http://localhost:5183/";
         options.JwtValidationClockSkew = TimeSpan.FromMinutes(0);
         options.RequireHttpsMetadata = false;
     });

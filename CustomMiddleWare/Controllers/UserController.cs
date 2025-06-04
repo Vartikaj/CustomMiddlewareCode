@@ -67,7 +67,7 @@ namespace CustomMiddleWare.Controllers
 
                     if (loginData != null)
                     {
-                        AccessTokenDetails oAccessToken = await GenerateToken("https://localhost:7064/connect/token", (RegistrationModel)loginData.LstModel[0]);
+                        AccessTokenDetails oAccessToken = await GenerateToken("http://localhost:5183/connect/token", (RegistrationModel)loginData.LstModel[0]);
                         if (loginData.error)
                         {
                             result.success = true;
@@ -96,7 +96,8 @@ namespace CustomMiddleWare.Controllers
                 { "grant_type", "client_credentials" },
                 { "username", "username" },
                 { "password", "password" },
-                { "userdata", data }
+                { "scope", "CustomMiddleWare.write" },
+                { "userdata", JsonConvert.SerializeObject(loginData) } // or plain string
             };
             var content = new FormUrlEncodedContent(values);
             var response = await client.PostAsync(IdentityServer, content);
