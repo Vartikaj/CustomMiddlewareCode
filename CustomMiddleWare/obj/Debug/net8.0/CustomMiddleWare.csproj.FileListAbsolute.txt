@@ -86,3 +86,6 @@ C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\
 C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\IdentityServer4.AccessTokenValidation.dll
 C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\IdentityModel.dll
 C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\IdentityModel.AspNetCore.OAuth2Introspection.dll
+C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\Microsoft.Extensions.Caching.StackExchangeRedis.dll
+C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\Hied\Desktop\ProjectDevelopment\GRPC\CustomMiddleWare\CustomMiddleWare\CustomMiddleWare\bin\Debug\net8.0\StackExchange.Redis.dll

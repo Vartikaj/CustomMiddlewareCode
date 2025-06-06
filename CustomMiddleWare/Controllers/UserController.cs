@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -21,8 +22,10 @@ namespace CustomMiddleWare.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IRegistration _registrationService;
         private readonly IConfiguration _configuration;
-        public UserController(IRegistration registrationService, IConfiguration config)
+        private readonly CacheService _cacheService;
+        public UserController(IRegistration registrationService, IConfiguration config, CacheService cacheService)
         {
+            _cacheService = cacheService;
             _configuration = config;
             _registrationService = registrationService;
         }
@@ -68,6 +71,7 @@ namespace CustomMiddleWare.Controllers
                     if (loginData != null)
                     {
                         AccessTokenDetails oAccessToken = await GenerateToken("http://localhost:5183/connect/token", (RegistrationModel)loginData.LstModel[0]);
+                        await _cacheService.SetAsync("User_token_" + oLogin.firstname, oAccessToken, TimeSpan.FromMinutes(5));
                         if (loginData.error)
                         {
                             result.success = true;
@@ -93,10 +97,9 @@ namespace CustomMiddleWare.Controllers
             var values = new Dictionary<string, string> {
                 { "client_id", "mvc" },
                 { "client_secret", "secret" },
-                { "grant_type", "client_credentials" },
+                { "grant_type", "password" },
                 { "username", "username" },
                 { "password", "password" },
-                { "scope", "CustomMiddleWare.write" },
                 { "userdata", JsonConvert.SerializeObject(loginData) } // or plain string
             };
             var content = new FormUrlEncodedContent(values);
@@ -104,33 +107,6 @@ namespace CustomMiddleWare.Controllers
             var responseString = await response.Content.ReadAsStringAsync();
             AccessTokenDetails oAccessTokenDetails = JsonConvert.DeserializeObject<AccessTokenDetails>(responseString);
             return oAccessTokenDetails;
-
-            //var issuer = _configuration["Jwt:Issuer"];
-            //var audience = _configuration["Jwt:Audience"];
-            //var key = Encoding.UTF8.GetBytes(_configuration["Jwt:key"]);
-
-            //var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
-            //var subject = new ClaimsIdentity(new[]
-            //{
-            //    //new Claim(
-            //    //    JwtRegisteredClaimNames.Email, loginData.id
-            //    //),
-            //    new Claim("id", loginData.id.ToString())
-            // });
-
-            //var expires = DateTime.UtcNow.AddDays(10);
-            //var tokenDescription = new SecurityTokenDescriptor
-            //{
-            //    Subject = subject,
-            //    Issuer = issuer,
-            //    Expires = expires,
-            //    Audience = audience,
-            //    SigningCredentials = signingCredentials
-            //};
-
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //var token = tokenHandler.CreateToken(tokenDescription);
-            //var jwtToken = tokenHandler.WriteToken(token);
         }
     }
 }

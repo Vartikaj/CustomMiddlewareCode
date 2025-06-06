@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
+using StackExchange.Redis;
 using System.Data;
 using System.Net;
 using System.Text;
@@ -17,20 +18,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IRegistration, RegistrationService>();
 // builder.Services.AddScoped<JwtUtils>();
 // Register the MySQL DB connection for Dapper
+
 builder.Services.AddScoped<IDbConnection>(sp =>
     new MySqlConnection(builder.Configuration.GetConnectionString("Connection")));
 
+// redis cache
+builder.Services.AddStackExchangeRedisCache(sp =>
+{
+    sp.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+});
+
 // add middleware
 builder.Services.AddAuthentication("Bearer")
-    .AddIdentityServerAuthentication("Bearer", options =>
+    .AddJwtBearer("Bearer", options =>
     {
-        options.ApiName = "CustomMiddleware";
-        options.Authority = "http://localhost:5183/";
-        options.JwtValidationClockSkew = TimeSpan.FromMinutes(0);
+        options.Authority = "http://localhost:5183"; // IdentityServer URL
         options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidAudience = "CustomMiddleWare", // must match 'aud' in token
+            ClockSkew = TimeSpan.Zero
+        };
     });
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<CacheService>();
 
 //builder.Services.AddAuthentication(options =>
 //{
