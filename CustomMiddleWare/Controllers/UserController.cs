@@ -71,7 +71,7 @@ namespace CustomMiddleWare.Controllers
                     if (loginData != null)
                     {
                         AccessTokenDetails oAccessToken = await GenerateToken("http://localhost:5183/connect/token", (RegistrationModel)loginData.LstModel[0]);
-                        await _cacheService.SetAsync("User_token_" + oLogin.firstname, oAccessToken, TimeSpan.FromMinutes(5));
+                        await _cacheService.Set("User_token_" + oLogin.firstname, oAccessToken, 60*8, 60);
                         if (loginData.error)
                         {
                             result.success = true;
