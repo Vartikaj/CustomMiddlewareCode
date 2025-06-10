@@ -1,4 +1,4 @@
-using CustomMiddleWare.Interfaces;
+﻿using CustomMiddleWare.Interfaces;
 using CustomMiddleWare.Middlewares;
 using CustomMiddleWare.Services;
 using CustomMiddleWare.Utilities;
@@ -29,18 +29,52 @@ builder.Services.AddStackExchangeRedisCache(sp =>
 });
 
 // add middleware
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer("Bearer", options =>
+//    {
+//        options.Authority = "http://localhost:5183"; // IdentityServer URL
+//        options.RequireHttpsMetadata = false;
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateAudience = true,
+//            ValidAudience = "CustomMiddleWare", // must match 'aud' in token
+//            ClockSkew = TimeSpan.Zero
+//        };
+//    });
+
+// Add services
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+.AddCookie("Cookies")
+.AddOpenIdConnect("oidc", options =>
+{
+    options.Authority = "https://your-identityserver-url"; // e.g. https://localhost:5001
+    options.ClientId = "mvc";
+    options.ClientSecret = "secret";
+    options.ResponseType = "code";
+
+    // 🔽 Clear default scopes and add OpenID scopes
+    options.Scope.Clear();
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
+    options.Scope.Add("CustomMiddleWare.write"); // your API scope
+    options.Scope.Add("offline_access"); // optional, for refresh token
+
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+
+    // Optional
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.Authority = "http://localhost:5183"; // IdentityServer URL
-        options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            ValidAudience = "CustomMiddleWare", // must match 'aud' in token
-            ClockSkew = TimeSpan.Zero
-        };
-    });
+        NameClaimType = "name",
+        RoleClaimType = "role"
+    };
+});
+
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<CacheService>();
